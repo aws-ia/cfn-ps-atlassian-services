@@ -1,5 +1,5 @@
 project:
-  name: quickstart-atlassian-services
+  name: cfn-ps-atlassian-services
   owner: quickstart-eng@amazon.com
   s3_regional_buckets: true
   package_lambda: false
@@ -26,9 +26,9 @@ tests:
       AccessCIDR: 10.0.0.0/16
       AvailabilityZones: $[taskcat_genaz_2]
       ExportPrefix: $[taskcat_random-string]
-      KeyPairName: replaced-by-taskcat-override-file
+      KeyPairName: $[taskcat_getkeypair]
       QSS3BucketName: $[taskcat_autobucket]
-      QSS3KeyPrefix: quickstart-atlassian-services/
+      QSS3KeyPrefix: cfn-ps-atlassian-services/
     regions:
     - us-west-2
     - ap-south-1
