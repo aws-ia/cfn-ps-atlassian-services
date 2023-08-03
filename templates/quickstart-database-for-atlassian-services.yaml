@@ -8,6 +8,9 @@ Metadata:
     config:
       ignore_checks:
         - E9101
+        - W9002
+        - W9003
+        - W9006
 Parameters:
   DatabaseImplementation:
     Default: 'Amazon Aurora PostgreSQL'
