@@ -17,8 +17,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: RDS Postgres Database for use in Atlassian Standard Infrastructure (qs-1aj6s44e4)
 Metadata:
-  QSLint:
-    Exclusions: [W4002, E3012, E1001, E9101, W9006, W9002, W9003, ERDSDBInstancePubliclyAccessible, EIAMPolicyWildcardResource, ERDSStorageEncryptionEnabled]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
 Parameters:
   DBEngineVersion:
     Default: 10
@@ -160,6 +162,13 @@ Resources:
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Type: AWS::KMS::Key
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource
+          ignore_reasons:
+            - EIAMPolicyActionWildcard: "All KMS actions allowed by design"
     Properties:
       KeyPolicy:
         Version: 2012-10-17
@@ -291,6 +300,13 @@ Resources:
 
   DB:
     Type: AWS::RDS::DBInstance
+    Metadata:
+      cfn-lint:
+        config:
+          ignore_checks:
+            - ERDSDBInstancePubliclyAccessible
+          ignore_reasons:
+            - ERDSDBInstancePubliclyAccessible: "PubliclyAccessible is false by default"
     Properties:
       AllocatedStorage: !Ref DBAllocatedStorage
       AutoMinorVersionUpgrade: !Ref DBAutoMinorVersionUpgrade

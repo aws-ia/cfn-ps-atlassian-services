@@ -2,8 +2,10 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: 'Master Template for Atlassian Services (qs-1p9o4n3sq)'
 Metadata:
-  QSLint:
-    Exclusions: [W4002, E3012, E1001, E9101, W9006, W9002, W9003, ERDSDBInstancePubliclyAccessible, EIAMPolicyWildcardResource, ERDSStorageEncryptionEnabled]
+  cfn-lint:
+    config:
+      ignore_checks:
+        - E9101
   QuickStartDocumentation:
     EntrypointName: "Launch into a new VPC"
   AWS::CloudFormation::Interface:
@@ -104,7 +106,7 @@ Parameters:
     Description: CIDR Block for the public DMZ subnet 2 located in Availability Zone 2.
     Type: String
   QSS3BucketName:
-    Default: 'aws-quickstart'
+    Default: 'aws-ia-us-east-1'
     AllowedPattern: ^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$
     ConstraintDescription: Quick Start bucket name can include numbers, lowercase
       letters, uppercase letters, and hyphens (-). It cannot start or end with a hyphen
@@ -118,7 +120,7 @@ Parameters:
     Type: String
     Description: The AWS Region where the Quick Start S3 bucket is hosted. Do not update it unless you're using a custom Quick Start S3 bucket.
   QSS3KeyPrefix:
-    Default: 'quickstart-atlassian-services/'
+    Default: 'cfn-ps-atlassian-services/'
     AllowedPattern: ^[0-9a-zA-Z-/]*$
     ConstraintDescription: Quick Start key prefix can include numbers, lowercase letters,
       uppercase letters, hyphens (-), and forward slash (/).
@@ -137,10 +139,10 @@ Conditions:
     - !Ref 'AWS::Region'
     - us-gov-west-1
   UsingDefaultBucket:
-    !Equals [!Ref QSS3BucketName, 'aws-quickstart']
+    !Equals [!Ref QSS3BucketName, 'aws-ia-us-east-1']
   NoBucketRegionSuppliedOrBucketPrefixIsDefault: !Or
     - !Equals [!Ref QSS3BucketRegion, '']
-    - !Equals [!Ref QSS3KeyPrefix, 'quickstart-atlassian-services/']
+    - !Equals [!Ref QSS3KeyPrefix, 'cfn-ps-atlassian-services/']
   KeyPairProvided:
     !Not [!Equals [!Ref KeyPairName, '']]
   ProvisionBastion: !And
@@ -155,10 +157,10 @@ Resources:
         # Maintain backward compatibility for non-region support
         - NoBucketRegionSuppliedOrBucketPrefixIsDefault
         - !Sub
-          - https://${QSS3BucketName}.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml
+          - https://${QSS3BucketName}.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/cfn-ps-aws-vpc/templates/aws-vpc.template.yaml
           - S3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
         - !Sub
-          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml
+          - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/submodules/cfn-ps-aws-vpc/templates/aws-vpc.template.yaml
           - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
             S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
       Parameters:
@@ -246,10 +248,10 @@ Outputs:
     Value: !If
       - NoBucketRegionSuppliedOrBucketPrefixIsDefault
       - !Sub
-        - https://${QSS3BucketName}.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template
+        - https://${QSS3BucketName}.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/cfn-ps-aws-vpc/templates/aws-vpc.template
         - S3Region: !If ["GovCloudCondition", "s3-us-gov-west-1", "s3"]
       - !Sub
-        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/submodules/quickstart-aws-vpc/templates/aws-vpc.template
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-atlassian-services/submodules/cfn-ps-aws-vpc/templates/aws-vpc.template
         - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
           S3Region: !If [UsingDefaultBucket, !Ref 'AWS::Region', !Ref QSS3BucketRegion]
   BastionTemplateURL:
